@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+
+    <title>message posts</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  
+    <h1>Message Posts</h1>
+    <p>post messages</p>
+
+    <form>
+      <label for="username-box">username</label>
+      <input type="text" id="username-box" class="username-box" placeholder="choose a username" autofocus>
+      <label for="message-box">message</label>
+      <input type="text" id="message-box" class="message-box" placeholder="your message here" autofocus>
+      <button>send</button>
+    </form>
+
+    <iframe src="page.html" width='414' height='414'>
+    </iframe>
+    
+    <script>
+    var para = document.querySelector('p');
+    var usernameInput = document.querySelector('.username-box');
+    var msgInput = document.querySelector('.message-box');
+    var button = document.querySelector('button');
+    
+    var ifr = document.querySelector('iframe');
+    var otherWindow = ifr.contentWindow;
+
+    ifr.addEventListener("load", iframeLoaded, false);
+    
+    function iframeLoaded() {
+      button.onclick = function(e) {
+        e.preventDefault();
+        
+        var channel = new MessageChannel();
+        otherWindow.postMessage(usernameInput.value + ': ' + msgInput.value, '*', [channel.port2]);
+
+        channel.port1.onmessage = handleMessage;
+        function handleMessage(e) {
+          para.innerHTML = e.data;
+          msgInput.value = '';
+        } 
+      }
+    }
+
+  </script>
+    
+  </body>
+</html>
